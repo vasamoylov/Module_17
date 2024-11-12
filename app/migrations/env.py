@@ -21,6 +21,8 @@ if config.config_file_name is not None:
 from app.backend.db import Base
 from app.models.user import User
 from app.models.task import Task
+
+
 target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,
@@ -41,6 +43,7 @@ def run_migrations_offline() -> None:
     script output.
 
     """
+
     url = config.get_main_option("sqlalchemy.url")
     context.configure(
         url=url,
@@ -60,15 +63,13 @@ def run_migrations_online() -> None:
     and associate a connection with the context.
 
     """
-    connectable = engine_from_config(
-        config.get_section(config.config_ini_section, {}),
-        prefix="sqlalchemy.",
-        poolclass=pool.NullPool,
-    )
+    engine = engine_from_config(
+        config.get_section(config.config_ini_section), prefix='sqlalchemy.')
 
-    with connectable.connect() as connection:
+    with engine.connect() as connection:
         context.configure(
-            connection=connection, target_metadata=target_metadata
+            connection=connection,
+            target_metadata=target_metadata
         )
 
         with context.begin_transaction():
